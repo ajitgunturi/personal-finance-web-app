@@ -1,0 +1,36 @@
+.user-details-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    background-color: #f9f9f9;
+  }
+  
+  .user-detail {
+    margin: 10px 0;
+  }
+  
+  .user-detail label {
+    font-weight: bold;
+  }
+  
+  .user-accounts {
+    margin-top: 20px;
+  }
+  
+  .account {
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .account:hover {
+    background-color: #efefef;
+  }
+  
