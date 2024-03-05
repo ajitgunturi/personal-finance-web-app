@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="footer-content">
         <p>Developed by Ajit Kumar Gunturi</p>
         <p>Contact us: <a href="mailto:ajit.gunturi@gmail.com">ajit.gunturi@gmail.com</a></p>
-        <p>API Docs: <a href="http://localhost:8080/swagger-ui/" target="_blank" rel="noopener noreferrer">Swagger UI</a></p>
+        <p>API Docs: <a href="http://localhost:8080/swagger-ui/index.html" target="_blank" rel="noopener noreferrer">Swagger UI</a></p>
       </div>
     </footer>
   );
