@@ -1,47 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './UserDetails.css';
 
-const userData = [
-  {
-    "uuid": 1,
-    "name": "Ajit Kumar",
-    "username": "ajitgunturi",
-    "email": "ajit.gunturi@gmail.com",
-    "accounts": [
-      {
-        "accountNumber": 123456789,
-        "ifscCode": "ABCD0001234",
-        "name": "Ajit Kumar",
-        "accountType": "Savings",
-        "accountBalance": 10000,
-        "user": "ajitgunturi"
-      }
-    ]
-  },
-  {
-    "uuid": 3,
-    "name": "Ajit Kumar",
-    "username": "ajitgunturi",
-    "email": "ajit.gunturi1@gmail.com",
-    "accounts": []
-  }
-];
-
 const UserDetails = () => {
+  const [userData, setUserData] = useState([]);
+  const [visibleAccounts, setVisibleAccounts] = useState({});
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/users');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setUserData(data);
+        const initialVisibilityStates = data.reduce((acc, user) => ({ ...acc, [user.uuid]: false }), {});
+        setVisibleAccounts(initialVisibilityStates);
+      } catch (error) {
+        console.error("Could not fetch user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const handleToggleAccounts = (uuid) => {
+    setVisibleAccounts(prev => ({ ...prev, [uuid]: !prev[uuid] }));
+  };
+
   return (
     <div className="user-details-container">
       {userData.map(user => (
-        <div key={user.uuid}>
-          <div className="user-detail">
-            <label>Name:</label> {user.name}
-          </div>
-          <div className="user-detail">
-            <label>Username:</label> {user.username}
-          </div>
-          <div className="user-detail">
-            <label>Email:</label> {user.email}
-          </div>
-          {user.accounts && user.accounts.length > 0 && (
+        <div key={user.uuid} className="user-card">
+          <div className="user-detail"><label>Name:</label> {user.name}</div>
+          <div className="user-detail"><label>Username:</label> {user.username}</div>
+          <div className="user-detail"><label>Email:</label> {user.email}</div>
+          <button className="show-accounts-btn" onClick={() => handleToggleAccounts(user.uuid)}>
+            {visibleAccounts[user.uuid] ? 'Hide Accounts' : 'Show Accounts'}
+          </button>
+          {visibleAccounts[user.uuid] && (
             <div className="user-accounts">
               {user.accounts.map((account, index) => (
                 <div key={index} className="account">
@@ -58,6 +55,6 @@ const UserDetails = () => {
       ))}
     </div>
   );
-}
+};
 
 export default UserDetails;
