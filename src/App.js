@@ -10,14 +10,21 @@ const Home = () => <div className="App">Welcome to personal finance application!
 function App() {
   return (
     <Router>
-      <div className="App">
+      <header>
         <Header />
+      </header>
+      
+      <div className="App">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/userdetails" element={<UserDetails />} />
         </Routes>
-        </div>
+      </div>
+      
+      <footer>
         <Footer />
+      </footer>
+        
 
     </Router>
   );

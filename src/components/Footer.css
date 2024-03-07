@@ -6,7 +6,7 @@
     background-color: #263238;
     color: #ECEFF1;
     border-top: 1px solid #CFD8DC;
-    position: absolute;
+    position: relative;
     bottom: 0;
     width: 100%;
 }
