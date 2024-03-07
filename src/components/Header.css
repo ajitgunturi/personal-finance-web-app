@@ -8,16 +8,12 @@
     flex-shrink: 0;
 }
 
-.header-title {
-    font-size: 24px;
-    font-weight: bold;
-}
-
 .header-nav .nav-link {
     margin-left: 20px;
     color: #FFC107;
     text-decoration: none;
     font-size: 18px;
+    font-weight: normal;
 }
 
 .header-nav .nav-link:hover {

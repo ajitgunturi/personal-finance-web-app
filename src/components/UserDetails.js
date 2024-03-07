@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './UserDetails.css';
 
 const UserDetails = () => {
-  const [userData, setUserData] = useState([]);
+  const [userData, setUserData] = useState(null);
   const [visibleAccounts, setVisibleAccounts] = useState({});
 
   useEffect(() => {
@@ -18,6 +18,7 @@ const UserDetails = () => {
         setVisibleAccounts(initialVisibilityStates);
       } catch (error) {
         console.error("Could not fetch user data:", error);
+        setUserData([])
       }
     };
 
@@ -27,6 +28,12 @@ const UserDetails = () => {
   const handleToggleAccounts = (uuid) => {
     setVisibleAccounts(prev => ({ ...prev, [uuid]: !prev[uuid] }));
   };
+
+  if (userData === null) {
+    return <div className="user-details-container">Loading user data...</div>;
+  } else if (userData.length === 0) {
+    return <div className="user-details-container">Unable to fetch data from server</div>;
+  }
 
   return (
     <div className="user-details-container">
@@ -38,7 +45,7 @@ const UserDetails = () => {
           <button className="show-accounts-btn" onClick={() => handleToggleAccounts(user.uuid)}>
             {visibleAccounts[user.uuid] ? 'Hide Accounts' : 'Show Accounts'}
           </button>
-          {visibleAccounts[user.uuid] && (
+          {visibleAccounts[user.uuid] &&(
             <div className="user-accounts">
               {user.accounts.map((account, index) => (
                 <div key={index} className="account">
