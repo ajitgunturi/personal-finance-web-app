@@ -4,29 +4,38 @@ import Header from './components/Header';
 import UserDetails from './components/UserDetails';
 import Footer from './components/Footer';
 import './App.css';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/tabs';
 
 const Home = () => <div className="App">Welcome to personal finance application!</div>;
 
 function App() {
   return (
-    <Router>
-      <header>
+    <div className="App">
+
         <Header />
-      </header>
+
+      <main>
+      <Tabs >
+  <TabList>
+    <Tab _selected={{ color: 'white', bg: 'blue.500' }}>Home</Tab>
+    <Tab _selected={{ color: 'white', bg: 'green.400' }}>UserDetails</Tab>
+  </TabList>
+  <TabPanels>
+    <TabPanel>
+      <p>one!</p>
+    </TabPanel>
+    <TabPanel>
+      <p><UserDetails/></p>
+    </TabPanel>
+  </TabPanels>
+</Tabs>
+      </main>
       
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/userdetails" element={<UserDetails />} />
-        </Routes>
-      </div>
-      
-      <footer>
         <Footer />
-      </footer>
+      
         
 
-    </Router>
+    </div>
   );
 }
 

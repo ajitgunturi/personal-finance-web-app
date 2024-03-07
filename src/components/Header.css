@@ -5,6 +5,7 @@
     padding: 20px;
     background-color: #263238;
     color: #ECEFF1;
+    flex-shrink: 0;
 }
 
 .header-title {
