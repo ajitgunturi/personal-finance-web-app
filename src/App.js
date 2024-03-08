@@ -4,22 +4,25 @@ import Header from './components/Header';
 import UserDetails from './components/UserDetails';
 import Footer from './components/Footer';
 import './App.css';
-
-const Home = () => <div className="App">Welcome to personal finance application!</div>;
+import Dashboard from './components/Dashboard';
+import ExpenseDetails from './components/ExpenseDetails';
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/userdetails" element={<UserDetails />} />
-        </Routes>
-        </div>
-        <Footer />
-
-    </Router>
+    <div className="App">
+      <Header />
+      
+      <main>
+        <Router>
+          <Routes >
+            <Route path="/" element={<Dashboard/>}/>
+            <Route path="/userDetails" element={<UserDetails/>}/>
+            <Route path="/expenseDetails" element={<ExpenseDetails/>}/>
+          </Routes>
+        </Router>
+      </main>
+      <Footer />
+    </div>
   );
 }
 
