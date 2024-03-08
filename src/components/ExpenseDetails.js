@@ -1,29 +1,97 @@
-import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react"
+import { useEffect, useState } from "react";
+import './ExpenseDetails.css'
 
 function ExpenseDetails(){
-    const { isOpen, onOpen, onClose } = useDisclosure()
+  const [userData, setUserData] = useState({});
+  const [expenseData, setExpenseData] = useState([]);
+  const [selectedExpense, setSelectedExpense] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch('http://localhost:9090/users/1');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setUserData(data);
+      } catch (error) {
+        console.error("Could not fetch user data:", error);
+        setUserData({})
+      }
+    };
+
+    const fetchExpensesData = async () => {
+      try {
+        const response = await fetch('http://localhost:9090/expenses/1');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setExpenseData(data);
+      } catch (error) {
+        console.error("Could not fetch user data:", error);
+        setExpenseData([])
+      }
+    };
+
+    fetchUserData();
+    fetchExpensesData();
+  }, []);
+
+  const handleRowClick = (expense) => {
+    setSelectedExpense(expense);
+  };
+
+  const handleDelete = (expenseId) => {
+    // Implement deletion logic here
+    console.log(`Delete expense with ID: ${expenseId}`);
+    // After deleting, you might want to fetch the updated expenses list or remove the deleted item from state
+  };
+
+  const handleEdit = (expenseId) => {
+    // Implement edit logic here
+    console.log(`Edit expense with ID: ${expenseId}`);
+    // This could involve setting another piece of state to manage the edit form visibility and data
+  };
+
     return(
-        <>
-      <Button onClick={onOpen}>Open Modal</Button>
+        <div>
+            <div className="expense-header">
+              <div key={userData.userId} className="user-card">
+                <div className="user-detail">{userData.firstName}'s Expenses</div>
+              </div>
+            </div>
+            <div>
+            <table id="expenseTable">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button variant='ghost'>Secondary Action</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
+                      {expenseData.map((expense, index) => (
+                        <tr key={index}  onClick={() => handleRowClick(expense)}>
+                          <td>{expense.category}</td>
+                          <td style={{ color: parseInt(expense.amount) > 0 ? 'green' : 'red' , alignContent: 'end'}}>
+                            
+                          <i class="fa fa-inr"></i> {expense.amount}</td>
+                          <td>{expense.description}</td>
+                          {selectedExpense && selectedExpense === expense && (
+                            <td>
+                              <button onClick={() => handleEdit(expense.id)}>Edit</button>
+                              <button onClick={() => handleDelete(expense.id)}>Delete</button>
+                            </td>
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     )
 
 }
