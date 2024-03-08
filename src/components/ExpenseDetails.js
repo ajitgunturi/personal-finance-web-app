@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
 import './ExpenseDetails.css'
+import axios from "axios";
+import { Button, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react";
 
 function ExpenseDetails(){
   const [userData, setUserData] = useState({});
   const [expenseData, setExpenseData] = useState([]);
   const [selectedExpense, setSelectedExpense] = useState(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [editFormData, setEditFormData] = useState({ category: '', amount: '', description: '' });
+
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -43,17 +48,46 @@ function ExpenseDetails(){
     setSelectedExpense(expense);
   };
 
-  const handleDelete = (expenseId) => {
-    // Implement deletion logic here
-    console.log(`Delete expense with ID: ${expenseId}`);
-    // After deleting, you might want to fetch the updated expenses list or remove the deleted item from state
+  const handleDelete = async (expense) => {
+    console.log(`Delete expense with ID: ${expense.expenseId}`);
+    try{
+      await axios.delete('http://localhost:9090/expenses/'+expense.expenseId)
+      setExpenseData(expenseData => expenseData.filter(exp => exp.expenseId!==expense.expenseId));
+    }catch(error){
+      console.error('Could not delete the expense:', error)
+    }
   };
 
-  const handleEdit = (expenseId) => {
-    // Implement edit logic here
-    console.log(`Edit expense with ID: ${expenseId}`);
-    // This could involve setting another piece of state to manage the edit form visibility and data
+  const handleEdit = (expense) => {
+    console.log(`Edit expense with ID: ${expense.expenseId}`);
+    setEditFormData(expense);
+    onOpen();
   };
+
+  const handleSubmitEditForm = async (e) => {
+    e.preventDefault();
+    onClose()
+    try {
+      const response = await fetch(`http://localhost:9090/expenses/${editFormData.expenseId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editFormData),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const updatedExpense = await response.json();
+      console.log('Updated expense:', updatedExpense.expenseId);
+      
+    } catch (error) {
+      console.error("Could not update the expense:", error);
+    }
+  };
+  
 
     return(
         <div>
@@ -78,18 +112,62 @@ function ExpenseDetails(){
                           <td>{expense.category}</td>
                           <td style={{ color: parseInt(expense.amount) > 0 ? 'green' : 'red' , alignContent: 'end'}}>
                             
-                          <i class="fa fa-inr"></i> {expense.amount}</td>
+                          <i className="fa fa-inr"></i> {expense.amount}</td>
                           <td>{expense.description}</td>
                           {selectedExpense && selectedExpense === expense && (
                             <td>
-                              <button onClick={() => handleEdit(expense.id)}>Edit</button>
-                              <button onClick={() => handleDelete(expense.id)}>Delete</button>
+                              <button onClick={() => handleEdit(expense)}>Edit</button>
+                              <button onClick={() => handleDelete(expense)}>Delete</button>
                             </td>
-                          )}
+                          )}  
                         </tr>
                       ))}
                     </tbody>
                 </table>
+                
+                  <Modal isOpen={isOpen} onClose={onClose} size='xl'>
+                    <ModalOverlay bg="blackAlpha.300"/>
+                    <ModalContent
+                    sx={{
+                      maxW: '32rem',
+                      bg: 'gray.50',
+                      color: 'black'
+                    
+                    }}
+                    >
+                      <ModalHeader>Edit Expense</ModalHeader>
+                      <ModalCloseButton />
+                      <form onSubmit={handleSubmitEditForm}>
+                        <ModalBody>
+                          <Input
+                            placeholder="Category"
+                            mb={3}
+                            value={editFormData.category}
+                            onChange={e => setEditFormData({ ...editFormData, category: e.target.value })}
+                          />
+                          <Input
+                            placeholder="Amount"
+                            mb={3}
+                            type="number"
+                            value={editFormData.amount}
+                            onChange={e => setEditFormData({ ...editFormData, amount: e.target.value })}
+                          />
+                          <Input
+                            placeholder="Description"
+                            mb={3}
+                            value={editFormData.description}
+                            onChange={e => setEditFormData({ ...editFormData, description: e.target.value })}
+                          />
+                        </ModalBody>
+                        <ModalFooter>
+                          <Button mr={3} onClick={onClose}>
+                            Close
+                          </Button>
+                          <Button type="submit">Save</Button>
+                        </ModalFooter>
+                      </form>
+                    </ModalContent>
+                  </Modal>
             </div>
         </div>
     )
