@@ -1,0 +1,35 @@
+.footer-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #263238;
+    color: #ECEFF1;
+    border-top: 1px solid #CFD8DC;
+    
+    bottom: 0;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    
+    width: 100%;
+    flex-shrink: 0;
+    height: 100px; 
+    line-height: 20px; 
+
+}
+
+.footer-content p {
+    margin: 5px 10px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.footer-content a {
+    color: #FFC107;
+    text-decoration: none;
+}
+
+.footer-content a:hover {
+    text-decoration: underline;
+}
