@@ -6,6 +6,11 @@
     background-color: #263238;
     color: #ECEFF1;
     flex-shrink: 0;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 80px;
 }
 
 .header-nav .nav-link {

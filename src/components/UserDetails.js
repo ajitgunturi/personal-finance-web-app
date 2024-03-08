@@ -7,7 +7,7 @@ const UserDetails = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch('http://localhost:9090/users');
+        const response = await fetch('http://localhost:9090/api/users');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -29,6 +29,7 @@ const UserDetails = () => {
   }
 
   return (
+    
     <div className="user-details-container">
       {userData.map(user => (
         <div key={user.uuid} className="user-card">

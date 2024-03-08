@@ -6,10 +6,17 @@
     background-color: #263238;
     color: #ECEFF1;
     border-top: 1px solid #CFD8DC;
-    position: relative;
+    
     bottom: 0;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    
     width: 100%;
     flex-shrink: 0;
+    height: 100px; 
+    line-height: 20px; 
+
 }
 
 .footer-content p {

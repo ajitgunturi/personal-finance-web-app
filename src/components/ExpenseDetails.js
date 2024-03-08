@@ -12,37 +12,36 @@ function ExpenseDetails(){
 
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch('http://localhost:9090/users/1');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setUserData(data);
-      } catch (error) {
-        console.error("Could not fetch user data:", error);
-        setUserData({})
-      }
-    };
-
-    const fetchExpensesData = async () => {
-      try {
-        const response = await fetch('http://localhost:9090/expenses/1');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setExpenseData(data);
-      } catch (error) {
-        console.error("Could not fetch user data:", error);
-        setExpenseData([])
-      }
-    };
-
     fetchUserData();
     fetchExpensesData();
   }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch('http://localhost:9090/api/users/1');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setUserData(data);
+    } catch (error) {
+      console.error("Could not fetch user data:", error);
+      setUserData({})
+    }
+  };
+  const fetchExpensesData = async () => {
+    try {
+      const response = await fetch('http://localhost:9090/api/expenses/1');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setExpenseData(data);
+    } catch (error) {
+      console.error("Could not fetch user data:", error);
+      setExpenseData([])
+    }
+  };
 
   const handleRowClick = (expense) => {
     setSelectedExpense(expense);
@@ -51,7 +50,7 @@ function ExpenseDetails(){
   const handleDelete = async (expense) => {
     console.log(`Delete expense with ID: ${expense.expenseId}`);
     try{
-      await axios.delete('http://localhost:9090/expenses/'+expense.expenseId)
+      await axios.delete('http://localhost:9090/api/expenses/'+expense.expenseId)
       setExpenseData(expenseData => expenseData.filter(exp => exp.expenseId!==expense.expenseId));
     }catch(error){
       console.error('Could not delete the expense:', error)
@@ -64,11 +63,18 @@ function ExpenseDetails(){
     onOpen();
   };
 
+  const updateExpenseById = (expenseId, updatedExpense) => {
+    const updatedExpenses = expenseData.map(expense =>
+      expense.id === expenseId ? { ...expense, ...updatedExpense } : expense
+    );
+    setExpenseData(updatedExpenses);
+  };
+
   const handleSubmitEditForm = async (e) => {
     e.preventDefault();
     onClose()
     try {
-      const response = await fetch(`http://localhost:9090/expenses/${editFormData.expenseId}`, {
+      const response = await fetch(`http://localhost:9090/api/expenses/${editFormData.expenseId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -82,7 +88,7 @@ function ExpenseDetails(){
   
       const updatedExpense = await response.json();
       console.log('Updated expense:', updatedExpense.expenseId);
-      
+      updateExpenseById(updatedExpense.expenseId, updatedExpense)
     } catch (error) {
       console.error("Could not update the expense:", error);
     }
@@ -101,7 +107,8 @@ function ExpenseDetails(){
                     <thead>
                         <tr>
                             <th>Category</th>
-                            <th>Amount</th>
+                            <th>Credit</th>
+                            <th>Debit</th>
                             <th>Description</th>
                         </tr>
                     </thead>
@@ -110,9 +117,21 @@ function ExpenseDetails(){
                       {expenseData.map((expense, index) => (
                         <tr key={index}  onClick={() => handleRowClick(expense)}>
                           <td>{expense.category}</td>
-                          <td style={{ color: parseInt(expense.amount) > 0 ? 'green' : 'red' , alignContent: 'end'}}>
+                        
+                          {expense.amount > 0 ? (
+                            <>
+                              <td style={{ color: 'green' , alignContent: 'end'}}>{'\u20B9'} {expense.amount}</td>
+                              <td></td>
+                            </>
                             
-                          <i className="fa fa-inr"></i> {expense.amount}</td>
+                          ) : (
+                            <>
+                              <td></td>
+                              <td style={{ color:'red' , alignContent: 'end'}}>{'\u20B9'} {-expense.amount}</td>
+                            </>
+                          )}
+                            
+                          
                           <td>{expense.description}</td>
                           {selectedExpense && selectedExpense === expense && (
                             <td>
@@ -125,16 +144,13 @@ function ExpenseDetails(){
                     </tbody>
                 </table>
                 
-                  <Modal isOpen={isOpen} onClose={onClose} size='xl'>
-                    <ModalOverlay bg="blackAlpha.300"/>
-                    <ModalContent
-                    sx={{
-                      maxW: '32rem',
-                      bg: 'gray.50',
+                  <Modal isOpen={isOpen} onClose={onClose} >
+                    <ModalOverlay bg="black.300"/>
+                    <ModalContent sx={{
+                      maxW: '40rem',
+                      bg:'gray.50',
                       color: 'black'
-                    
-                    }}
-                    >
+                    }}>
                       <ModalHeader>Edit Expense</ModalHeader>
                       <ModalCloseButton />
                       <form onSubmit={handleSubmitEditForm}>
